@@ -1,8 +1,10 @@
 import mongoose, { Document, Schema } from 'mongoose';
 
 export interface User extends Document {
-    firstname:string 
-    email: string
+  firstname: string;
+  email: string;
+  referral_code?: string;
+  idempotent_key: number;
 }
 
 const UserSchema = new Schema(

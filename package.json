@@ -7,7 +7,8 @@
     "build": "tsc",
     "start": "node dist/index.js",
     "dev": "tsx watch  src/index.ts",
-   "db-check": "npx tsx src/__tests__/test-connection.ts"
+    "db-check": "npx tsx src/__tests__/test-connection.ts",
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js --runInBand"
   },
   "keywords": [],
   "author": "",
@@ -19,9 +20,40 @@
       "onFail": "download"
     }
   },
+  "jest": {
+    "testEnvironment": "node",
+    "extensionsToTreatAsEsm": [
+      ".ts"
+    ],
+    "moduleNameMapper": {
+      "^(\\.{1,2}/.*)\\.js$": "$1"
+    },
+    "testMatch": [
+      "<rootDir>/src/__tests__/**/*.tests.ts"
+    ],
+    "transform": {
+      "^.+\\.tsx?$": [
+        "@swc/jest",
+        {
+          "jsc": {
+            "parser": {
+              "syntax": "typescript"
+            },
+            "target": "es2022"
+          },
+          "module": {
+            "type": "es6"
+          }
+        }
+      ]
+    }
+  },
   "packageManager": "pnpm@12.21.0",
   "type": "module",
   "devDependencies": {
+    "@jest/globals": "^30.5.2",
+    "@swc/core": "^1.16.22",
+    "@swc/jest": "^0.2.39",
     "@types/node": "^26.6.6",
     "ts-node": "^10.9.2",
     "tsx": "^4.23.15",
@@ -32,6 +64,8 @@
     "dotenv": "^18.0.10",
     "express": "^5.3.0",
     "ioredis": "^6.0.0",
-    "mongoose": "^9.12.2"
+    "jest": "^30.5.2",
+    "mongoose": "^9.12.2",
+    "supertest": "^7.3.2"
   }
 }
