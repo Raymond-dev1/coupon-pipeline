@@ -1,30 +1,26 @@
-import dotenv from "dotenv"
-dotenv.config()
+import  {sendMail } from "../lib/mailer.ts"
 
-const RESEND_API_KEY = process.env.RESEND_API_KEY!
+interface EmailInput {
+    email:string,
+    name:string,
+    code:string
+}
 
-export const sendMail = async (to: string, subject: string, html: string) => {
-  const res = await fetch('https://api.resend.com/emails', {
-    method: 'POST',
-    headers: {
-      Authorization: `Bearer ${RESEND_API_KEY}`,
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({
-      from: 'Ray <onboarding@resend.dev>',
-      to,
-      subject,
-      html
-    })
-  })
 
-  if (!res.ok) {
-    const error = await res.json()
-    console.error('Resend failed to send email:', error)
-    throw new Error('Failed to send email')
-  }
-
-  const data:any = await res.json()
-  console.log('Email sent:', data.id)
-  return data
+export const sendReferralCode = async ({name, email, code}: EmailInput) =>{
+    try{
+        await sendMail (
+            email,
+             'Verify your Vouch account',
+            `<h1>Hi ${name}</h1> <p>Your referral code is <strong>${code}</strong></p>`
+        )
+        return{
+            status: 200,
+            success:true,
+            message: 'Referral code sent successfully' 
+        }
+    }catch(error){
+        console.error('error in sendReferralCode : ', error)
+        return {success:false, message: 'internal server error', error}
+    }
 }

@@ -1,10 +1,10 @@
 import express from 'express'
 import dotenv from 'dotenv';
 import http from 'http';
-import config from './config/db.config.ts'
+import {connectDB} from './config/db.config.ts'
 
 dotenv.config()
-config.connectDB()
+await connectDB()
 
 const app: express.Application =express()
 

@@ -1,7 +1,11 @@
-import {generateReferralCode} from '../utils/code'
-import { findByEMail } from '../services/referral.service'
+import Router from 'express'
+import { emailQueue } from '../lib/queue.ts'
+const router = Router()
 
-router.post('referral/webhook', async (req:any, res:any) =>{
-    return res.status(200).json({message:"Webhook received successfully"})
-    const payload = req.body
+router.post('/referral/webhook', async (req:any, res:any) =>{
+    res.status(200).json({message:"Webhook received successfully"})
+    const {firstname, email, idempotencyKey} = req.body
+    
+    await emailQueue.add('create-referral-code', { firstname, email, idempotencyKey })
+    console.log('Referral code job added to queue')
 })

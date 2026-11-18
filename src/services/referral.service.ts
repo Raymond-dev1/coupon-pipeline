@@ -1,9 +1,10 @@
 import User from '../models/users.models.js';
 import { generateReferralCode } from '../utils/code.js';
+import { emailQueue } from '../lib/queue.ts';
 
-export const findByEMail = (email: string) => User.findOne({ email });
+export const findByEmail = (email: string) => User.findOne({ email });
 
-type CreateReferralCodeInput = {
+export type CreateReferralCodeInput = {
   firstname: string;
   email: string;
   idempotencyKey: number;
@@ -13,7 +14,7 @@ export const createReferralCode = async (
   { firstname, email, idempotencyKey }: CreateReferralCodeInput,
 ) => {
   try {
-    const existingUser = await findByEMail(email);
+    const existingUser = await findByEmail(email);
 
     if (existingUser?.idempotent_key === idempotencyKey) {
       return { status: 409, success: false, message: 'Duplicate request' };
@@ -28,13 +29,16 @@ export const createReferralCode = async (
       };
     }
 
-    const referral_code = await generateReferralCode(6);
+    const referral_code = generateReferralCode(6);
     const newUser = await User.create({
       firstname,
       email,
       referral_code,
       idempotent_key: idempotencyKey,
-    });
+    })
+    // job to worker
+    await emailQueue.add('send-referral-code', { name: firstname, email, code: referral_code });
+    console.log('Referral code job added to queue');
 
     return {
       status: 201,
