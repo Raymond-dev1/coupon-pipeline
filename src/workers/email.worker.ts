@@ -8,7 +8,6 @@ import {createReferralCode} from "../services/referral.service.ts"
 import type { CreateReferralCodeInput } from "../services/referral.service.ts"
 
 const EmailWorker  = new Worker ('email', async (job) => {
-  try{
     const {name, email, idempotencyKey, code} =job.data
         switch(job.name){
         case 'send-referral-code':
@@ -20,11 +19,10 @@ const EmailWorker  = new Worker ('email', async (job) => {
             console.log('createReferralCode job processed')
             break;
             default:
+              throw new Error(`Unknown job name: : ${job.name}`);
         }
-  }catch(error){
-                return {status: 500, success: false, message: 'internal server error', error}
-              }
-}, {connection} as any)
+
+}, {connection})
 
 
 EmailWorker.on("completed", (job  ) => {

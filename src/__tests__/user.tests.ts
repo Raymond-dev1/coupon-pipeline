@@ -33,12 +33,12 @@ describe('createReferralCode', () => {
     mockGenerateReferralCode.mockReturnValue('ABC123');
     mockCreate.mockResolvedValue(newUser);
 
-    const result = await createReferralCode({ ...user, idempotencyKey: 12 });
+    const result = await createReferralCode({ ...user, idempotencyKey: '12' });
 
     expect(mockCreate).toHaveBeenCalledWith({
       ...user,
       referral_code: 'ABC123',
-      idempotent_key: 12,
+      idempotent_key: '12',
     });
     expect(result).toEqual({
       status: 201,
@@ -57,7 +57,7 @@ describe('createReferralCode', () => {
     });
 
     await expect(
-      createReferralCode({ ...user, idempotencyKey: 12 }),
+      createReferralCode({ ...user, idempotencyKey: '12' }),
     ).resolves.toEqual({
       status: 409,
       success: false,
@@ -75,7 +75,7 @@ describe('createReferralCode', () => {
     mockFindOne.mockResolvedValue(existingUser);
 
     await expect(
-      createReferralCode({ ...user, idempotencyKey: 12 }),
+      createReferralCode({ ...user, idempotencyKey: '12' }),
     ).resolves.toEqual({
       status: 409,
       success: false,
