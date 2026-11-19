@@ -9,7 +9,7 @@ export const emailQueue = new Queue('email', {
       type: "exponential",
       delay: 5000,
     },
-    removeOnComplete: true,
-    removeOnFail: false
+    removeOnComplete: {age:3600, count:1000},
+    removeOnFail: {age:86400}
   }
 })
