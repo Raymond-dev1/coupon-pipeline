@@ -7,6 +7,7 @@ dotenv.config()
 await connectDB()
 
 const app: express.Application =express()
+app.use(express.json())
 
 const PORT = process.env.PORT
 const  server =http.createServer(app) 

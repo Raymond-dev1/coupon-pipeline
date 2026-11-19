@@ -10,5 +10,3 @@ export function generateReferralCode(length:number): string {
   }
   return uniqueToken;  
 }
-
-const referral_code = generateReferralCode(6)

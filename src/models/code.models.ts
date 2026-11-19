@@ -21,8 +21,6 @@ const DiscountSchema = new Schema(
     },
     count: {
       type: Number,
-      unique: true,
-      trim: true,
     },
   },
   { timestamps: true }

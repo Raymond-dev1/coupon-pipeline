@@ -4,7 +4,7 @@ export interface User extends Document {
   firstname: string;
   email: string;
   referral_code?: string;
-  idempotent_key: number;
+  idempotent_key: string;
 }
 
 const UserSchema = new Schema(
@@ -28,9 +28,14 @@ const UserSchema = new Schema(
     count:{
       type:Number,
     },
+    referral_email_sent:{
+      type:Boolean,
+      default:false
+    },
     idempotent_key:{
-      type:Number,
+      type:String,
       required:true,
+      unique:true,
       trim:true
     }
   },

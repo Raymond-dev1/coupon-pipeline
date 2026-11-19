@@ -1,5 +1,5 @@
-import User from '../models/users.models.js';
-import { generateReferralCode } from '../utils/code.js';
+import User from '../models/users.models.ts';
+import { generateReferralCode } from '../utils/code.ts';
 import { emailQueue } from '../lib/queue.ts';
 
 export const findByEmail = (email: string) => User.findOne({ email });
@@ -7,7 +7,7 @@ export const findByEmail = (email: string) => User.findOne({ email });
 export type CreateReferralCodeInput = {
   firstname: string;
   email: string;
-  idempotencyKey: number;
+  idempotencyKey: string;
 };
 
 export const createReferralCode = async (
@@ -15,17 +15,17 @@ export const createReferralCode = async (
 ) => {
   try {
     const existingUser = await findByEmail(email);
+    const idKey = await User.findOne({ idempotent_key: idempotencyKey });
 
-    if (existingUser?.idempotent_key === idempotencyKey) {
+    if (idKey) {
       return { status: 409, success: false, message: 'Duplicate request' };
     };
 
     if (existingUser) {
       return {
-        status: 409,
+        status: 200,
         success: false,
         referral_code: existingUser.referral_code,
-        existingUser,
       };
     }
 
